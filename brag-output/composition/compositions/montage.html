@@ -1,0 +1,88 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #mon-stage { position: absolute; inset: 0; }
+    .mon-zoom { position: absolute; inset: 0; transform-origin: 50% 50%; }
+    .mon-zoom video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    #mon-scrim { position: absolute; inset: 0; opacity: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0.42) 38%, rgba(0,0,0,0.42) 50%, rgba(0,0,0,0) 58%, rgba(0,0,0,0.55) 66%, rgba(0,0,0,0.6) 100%); }
+    .mon-word {
+      position: absolute; left: 0; right: 0; top: 760px; height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 96px; color: #efe9dd;
+      text-shadow: 0 2px 30px rgba(0,0,0,0.55);
+    }
+    .mon-word span { display: inline-block; letter-spacing: 0.42em; margin-right: -0.42em; }
+    .mon-word span b { display: inline-block; font-weight: 400; }
+    .mon-tick {
+      position: absolute; left: 0; right: 0; top: 1236px; text-align: center;
+      font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 40px; letter-spacing: 0.3em; color: #c9a55c;
+      text-shadow: 0 1px 14px rgba(0,0,0,0.7);
+    }
+    .mon-tick b { color: #efe9dd; font-weight: 500; }
+  </style>
+
+  <div id="root" data-composition-id="montage" data-width="1080" data-height="1920">
+    <div id="mon-stage">
+      <!-- beat-grid: cuts at film 5.0, 5.5, 6.0 ... 8.5 (one destination per beat) -->
+      <div id="mon-z1" class="mon-zoom"><video id="mon-v1" class="clip" data-start="0" data-duration="0.65" data-media-start="1.15" data-track-index="1" muted playsinline src="assets/video/maldives.mp4"></video></div>
+      <div id="mon-z2" class="mon-zoom"><video id="mon-v2" class="clip" data-start="0.55" data-duration="0.6" data-media-start="1.6" data-track-index="2" muted playsinline src="assets/video/bali.mp4"></video></div>
+      <div id="mon-z3" class="mon-zoom"><video id="mon-v3" class="clip" data-start="1.05" data-duration="0.6" data-media-start="1.4" data-track-index="3" muted playsinline src="assets/video/kyoto.mp4"></video></div>
+      <div id="mon-z4" class="mon-zoom"><video id="mon-v4" class="clip" data-start="1.55" data-duration="0.6" data-media-start="2.0" data-track-index="4" muted playsinline src="assets/video/safari.mp4"></video></div>
+      <div id="mon-z5" class="mon-zoom"><video id="mon-v5" class="clip" data-start="2.05" data-duration="0.6" data-media-start="1.5" data-track-index="5" muted playsinline src="assets/video/morocco.mp4"></video></div>
+      <div id="mon-z6" class="mon-zoom"><video id="mon-v6" class="clip" data-start="2.55" data-duration="0.6" data-media-start="1.8" data-track-index="6" muted playsinline src="assets/video/alps.mp4"></video></div>
+      <div id="mon-z7" class="mon-zoom"><video id="mon-v7" class="clip" data-start="3.05" data-duration="0.6" data-media-start="1.6" data-track-index="7" muted playsinline src="assets/video/capetown.mp4"></video></div>
+      <div id="mon-z8" class="mon-zoom"><video id="mon-v8" class="clip" data-start="3.55" data-duration="0.85" data-media-start="1.4" data-track-index="8" muted playsinline src="assets/video/budapest.mp4"></video></div>
+    </div>
+    <div id="mon-scrim"></div>
+
+    <!-- Thin, wide-tracked words held across three beats each -->
+    <p id="mon-w1" class="mon-word clip" data-start="0.05" data-duration="1.5" data-track-index="9"><span>WANDER</span></p>
+    <p id="mon-w2" class="mon-word clip" data-start="1.55" data-duration="1.5" data-track-index="9"><span>UNWIND</span></p>
+    <p id="mon-w3" class="mon-word clip" data-start="3.05" data-duration="1.35" data-track-index="9"><span>INDULGE</span></p>
+
+    <!-- Coordinates ticker, from the site's Atlas cards -->
+    <p id="mon-t1" class="mon-tick clip" data-start="0.05" data-duration="0.5" data-track-index="10">MALDIVES</p>
+    <p id="mon-t2" class="mon-tick clip" data-start="0.55" data-duration="0.5" data-track-index="10">BALI</p>
+    <p id="mon-t3" class="mon-tick clip" data-start="1.05" data-duration="0.5" data-track-index="10">KYOTO</p>
+    <p id="mon-t4" class="mon-tick clip" data-start="1.55" data-duration="0.5" data-track-index="10">SERENGETI</p>
+    <p id="mon-t5" class="mon-tick clip" data-start="2.05" data-duration="0.5" data-track-index="10">MARRAKECH</p>
+    <p id="mon-t6" class="mon-tick clip" data-start="2.55" data-duration="0.5" data-track-index="10">ZERMATT</p>
+    <p id="mon-t7" class="mon-tick clip" data-start="3.05" data-duration="0.5" data-track-index="10">CAPE TOWN</p>
+    <p id="mon-t8" class="mon-tick clip" data-start="3.55" data-duration="0.85" data-track-index="10">BUDAPEST</p>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      // First clip whips up into frame, matching the title's upward exit (film 5.00)
+      tl.fromTo("#mon-stage", { y: 700, filter: "blur(18px)" },
+        { y: 0, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, 0.0);
+      tl.fromTo("#mon-scrim", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 0.02);
+      // Zoom-cut on every beat: each clip lands slightly large and settles
+      for (let i = 1; i <= 8; i++) {
+        const t = 0.05 + (i - 1) * 0.5;
+        tl.fromTo("#mon-z" + i, { scale: 1.16 }, { scale: 1.0, duration: 0.55, ease: "expo.out" }, t);
+      }
+      // Words: glyphs spread wide then settle to rest in 0.4 s (transform-only), then hold dead still
+      ["#mon-w1", "#mon-w2", "#mon-w3"].forEach((id, k) => {
+        const span = document.querySelector(id + " span");
+        const word = span.textContent;
+        span.innerHTML = word.split("").map((c) => "<b>" + c + "</b>").join("");
+        const glyphs = span.querySelectorAll("b");
+        const mid = (glyphs.length - 1) / 2;
+        const t = 0.05 + k * 1.5;
+        glyphs.forEach((g, i) => {
+          tl.fromTo(g, { x: (i - mid) * 46, opacity: 0, filter: "blur(8px)" },
+            { x: 0, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out" }, t);
+        });
+      });
+      // Ticker label snaps in with each cut
+      for (let i = 1; i <= 8; i++) {
+        const t = 0.05 + (i - 1) * 0.5;
+        tl.fromTo("#mon-t" + i, { opacity: 0.0 }, { opacity: 1, duration: 0.08, ease: "none" }, t);
+      }
+      window.__timelines["montage"] = tl;
+    })();
+  </script>
+</template>

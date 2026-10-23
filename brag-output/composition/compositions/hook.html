@@ -1,0 +1,46 @@
+<template>
+  <style>
+    @font-face { font-family: "Anton"; src: url("assets/fonts/Anton-normal.woff2") format("woff2"); font-weight: 400; }
+    #root { position: absolute; inset: 0; overflow: hidden; background: #0a0a0a; }
+    #hook-push { position: absolute; inset: 0; transform-origin: 50% 40%; }
+    #hook-video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    .hook-word {
+      position: absolute; left: 0; right: 0; top: 300px; height: 300px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: "Anton", sans-serif; font-weight: 400; font-size: 250px; line-height: 1;
+      letter-spacing: -0.005em; text-transform: uppercase; color: #0a0a0a;
+    }
+    .hook-word span { display: inline-block; }
+  </style>
+
+  <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+    <div id="hook-push">
+      <video id="hook-video" class="clip" data-start="0" data-duration="2.75" data-media-start="0.2"
+             data-track-index="1" muted playsinline src="assets/video/santorini.mp4"></video>
+    </div>
+
+    <!-- One word per beat (120 BPM: 0.5 s). Frame 0 already carries THE. -->
+    <h1 id="hook-w1" class="hook-word clip" data-start="0" data-duration="0.5" data-track-index="2"><span>THE</span></h1>
+    <h1 id="hook-w2" class="hook-word clip" data-start="0.5" data-duration="0.5" data-track-index="2"><span>WORLD</span></h1>
+    <h1 id="hook-w3" class="hook-word clip" data-start="1" data-duration="0.5" data-track-index="2"><span>IS</span></h1>
+    <h1 id="hook-w4" class="hook-word clip" data-start="1.5" data-duration="1.25" data-track-index="2"><span>WAITING.</span></h1>
+  </div>
+
+  <script>
+    (function () {
+      const tl = gsap.timeline({ paused: true });
+      // Slow push on the caldera across the whole hook
+      tl.fromTo("#hook-push", { scale: 1.0 }, { scale: 1.09, duration: 2.75, ease: "power1.inOut" }, 0);
+
+      // THE is already landed at frame 0 (thumbnail); later words slam: big + blurred -> still, on the beat
+      const slam = (sel, t) => tl.fromTo(sel,
+        { scale: 1.35, opacity: 0, filter: "blur(14px)" },
+        { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "expo.out" }, t);
+      slam("#hook-w2 span", 0.5);   // beat-grid: 0.50
+      slam("#hook-w3 span", 1.0);   // beat-grid: 1.00
+      slam("#hook-w4 span", 1.5);   // beat-grid: 1.50
+      // WAITING. holds dead still, then is wiped by the iris (title scene) from 2.25
+      window.__timelines["hook"] = tl;
+    })();
+  </script>
+</template>
